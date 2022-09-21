@@ -60,6 +60,18 @@ Se ha añadido la librería `react-router-dom` para hacerse cargo del enrutado. 
 
 Se ha creado un `context` que almacena el estado de la aplicación. Actualmente guarda los favoritos, los actualiza contra el `localStorage` y expone métodos para añadir y eliminar favoritos.
 
+Añadida gestión de los meetups en el propio estado de la aplicación.
+
+## Listado de meetups
+
+Se ha corregido y separado en su propio componente el listado de **meetups** para pintar todos los items disponibles.
+
+Se ha enlazado el botón de favoritos al estado de la aplicación mediante las funciones que el context expone y añadiendo la funcionalidad de **Eliminar de favoritos**.
+
+## useFetch
+
+Añadida propiedad `isLoading` para utilizar en el estado de la aplicación.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

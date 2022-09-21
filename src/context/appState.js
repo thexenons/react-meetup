@@ -2,60 +2,97 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
 } from "react";
+import { useFetch } from "../util-hooks/useFetch";
 
-const initialAppState = { favorites: [] };
+const initialAppState = { favorites: [], meetups: [] };
 
 const AppStateContext = createContext(initialAppState);
 
 const APP_STATE_REDUCER_ACTIONS = {
+  UPDATE_MEETUPS: "UPDATE_MEETUPS",
   ADD_FAVORITE: "ADD_FAVORITE",
   DELETE_FAVORITE: "DELETE_FAVORITE",
 };
 
+const LOCALSTORAGE_MEETUP_KEY = "meetup-favorites";
+
 const appStateReducer = (state, action) => {
   switch (action.type) {
+    case APP_STATE_REDUCER_ACTIONS.UPDATE_MEETUPS:
+      return { ...state, meetups: action.payload };
+
     case APP_STATE_REDUCER_ACTIONS.ADD_FAVORITE:
+      const addFavoriteNewFavorites = [...state.favorites, action.payload];
+
+      localStorage.setItem(
+        LOCALSTORAGE_MEETUP_KEY,
+        JSON.stringify(addFavoriteNewFavorites)
+      );
+
       return {
         ...state,
-        favorites: [...state.favorites, action.payload],
+        favorites: addFavoriteNewFavorites,
       };
+
     case APP_STATE_REDUCER_ACTIONS.DELETE_FAVORITE:
+      const deleteFavoriteNewFavorites = state.favorites.filter(
+        (favorite) => favorite !== action.payload
+      );
+      localStorage.setItem(
+        LOCALSTORAGE_MEETUP_KEY,
+        JSON.stringify(deleteFavoriteNewFavorites)
+      );
+
       return {
         ...state,
-        favorites: state.favorites.filter(
-          (favorite) => favorite.id !== action.payload
-        ),
+        favorites: deleteFavoriteNewFavorites,
       };
+
     default:
       return state;
   }
 };
 
 const initializeAppState = () => {
-  const lsFavorites = localStorage.getItem("meetup-favorites");
+  const lsFavorites = localStorage.getItem(LOCALSTORAGE_MEETUP_KEY);
   let initialFavorites = [];
   if (lsFavorites) {
     try {
       initialFavorites = JSON.parse(lsFavorites);
     } catch (e) {
-      localStorage.setItem("meetup-favorites", JSON.stringify([]));
+      localStorage.setItem(LOCALSTORAGE_MEETUP_KEY, JSON.stringify([]));
     }
   } else {
-    localStorage.setItem("meetup-favorites", JSON.stringify([]));
+    localStorage.setItem(LOCALSTORAGE_MEETUP_KEY, JSON.stringify([]));
   }
 
-  return initialFavorites;
+  return { favorites: initialFavorites, meetups: [] };
 };
 
 export const AppStateProvider = ({ children }) => {
+  const { data, isLoading } = useFetch({
+    url: "/data.json",
+  });
+
   const [appState, dispatch] = useReducer(
     appStateReducer,
-    initialAppState,
+    { ...initialAppState, meetups: data || [] },
     initializeAppState
   );
+
+  useEffect(() => {
+    if (!!data?.length && data !== appState.data) {
+      dispatch({
+        type: APP_STATE_REDUCER_ACTIONS.UPDATE_MEETUPS,
+        payload: data,
+      });
+    }
+  }, [appState.data, data]);
+  console.log({ appState });
 
   const addFavorite = useCallback((meetup) => {
     dispatch({ type: APP_STATE_REDUCER_ACTIONS.ADD_FAVORITE, payload: meetup });
@@ -68,8 +105,8 @@ export const AppStateProvider = ({ children }) => {
   }, []);
 
   const returnValue = useMemo(
-    () => ({ ...appState, addFavorite, deleteFavorite }),
-    [addFavorite, appState, deleteFavorite]
+    () => ({ ...appState, isLoading, addFavorite, deleteFavorite }),
+    [addFavorite, appState, deleteFavorite, isLoading]
   );
 
   return (
