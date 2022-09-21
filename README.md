@@ -47,6 +47,19 @@ class RegisteredUser {
 }
 ```
 
+# Ejercicio 2
+
+## Enrutado
+
+Se ha añadido la librería `react-router-dom` para hacerse cargo del enrutado. Para centralizar la configuración de la aplicación, se ha creado la carpeta `config` que contiene los siguientes archivos:
+
+- **sections.js:** Encargado de definir las secciones que tendrá la web definiendo su `path` y el componente a pintar.
+- **menu.js**: Encargado de definir el menú utilizando las secciones antes declaradas definiendo su título y sectionKey. Adicionalmente se le puede configurar un `badge` basado en los datos del estado de la aplicación.
+
+## Estado de la aplicación
+
+Se ha creado un `context` que almacena el estado de la aplicación. Actualmente guarda los favoritos, los actualiza contra el `localStorage` y expone métodos para añadir y eliminar favoritos.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
