@@ -13,6 +13,7 @@ const initialAppState = { favorites: [], meetups: [] };
 const AppStateContext = createContext(initialAppState);
 
 const APP_STATE_REDUCER_ACTIONS = {
+  ADD_MEETUP: "ADD_MEETUP",
   UPDATE_MEETUPS: "UPDATE_MEETUPS",
   ADD_FAVORITE: "ADD_FAVORITE",
   DELETE_FAVORITE: "DELETE_FAVORITE",
@@ -22,8 +23,23 @@ const LOCALSTORAGE_MEETUP_KEY = "meetup-favorites";
 
 const appStateReducer = (state, action) => {
   switch (action.type) {
+    case APP_STATE_REDUCER_ACTIONS.ADD_MEETUP:
+      return { ...state, meetups: [...state.meetups, action.payload] };
     case APP_STATE_REDUCER_ACTIONS.UPDATE_MEETUPS:
-      return { ...state, meetups: action.payload };
+      const updateMeetupsNewFavorites = state.favorites.filter((favorite) =>
+        action.payload.find((meetup) => meetup.id === favorite)
+      );
+
+      localStorage.setItem(
+        LOCALSTORAGE_MEETUP_KEY,
+        JSON.stringify(updateMeetupsNewFavorites)
+      );
+
+      return {
+        ...state,
+        meetups: action.payload,
+        favorites: updateMeetupsNewFavorites,
+      };
 
     case APP_STATE_REDUCER_ACTIONS.ADD_FAVORITE:
       const addFavoriteNewFavorites = [...state.favorites, action.payload];
@@ -94,9 +110,17 @@ export const AppStateProvider = ({ children }) => {
   }, [appState.data, data]);
   console.log({ appState });
 
+  const addMeetup = useCallback((newMeetup) => {
+    dispatch({
+      type: APP_STATE_REDUCER_ACTIONS.ADD_MEETUP,
+      payload: newMeetup,
+    });
+  }, []);
+
   const addFavorite = useCallback((meetup) => {
     dispatch({ type: APP_STATE_REDUCER_ACTIONS.ADD_FAVORITE, payload: meetup });
   }, []);
+
   const deleteFavorite = useCallback((meetupId) => {
     dispatch({
       type: APP_STATE_REDUCER_ACTIONS.DELETE_FAVORITE,
@@ -105,8 +129,8 @@ export const AppStateProvider = ({ children }) => {
   }, []);
 
   const returnValue = useMemo(
-    () => ({ ...appState, isLoading, addFavorite, deleteFavorite }),
-    [addFavorite, appState, deleteFavorite, isLoading]
+    () => ({ ...appState, isLoading, addMeetup, addFavorite, deleteFavorite }),
+    [addFavorite, addMeetup, appState, deleteFavorite, isLoading]
   );
 
   return (

@@ -72,6 +72,10 @@ Se ha enlazado el botón de favoritos al estado de la aplicación mediante las f
 
 Añadida propiedad `isLoading` para utilizar en el estado de la aplicación.
 
+## Formulario
+
+Conectado formulario al estado de la aplicación para añadir nuevos **meetups** y poder añadirlos a favoritos.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
