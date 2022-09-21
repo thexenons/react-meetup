@@ -1,3 +1,52 @@
+# Ejercicio 1
+
+La función `getTotal` no es escalable, puesto que la adición de nuevos tipos de servicios implicarían una modificación de la función y, por ende, de la clase.
+
+Se podría dar el caso de que viniese un servicio no contemplado, en ese caso se añadiría el cargo adicional sin cargar el precio del servicio ni tener constancia de la falta de asociación.
+
+Manteniendo el modelo propondría modificar la clase para que reciba a través del constructor una asignación de tipos de servicio a la propiedad en la que se ve referenciado su precio en los datos del contenido. De esta forma aunque se añadan tipos de servicios nuevos, no será necesario modificar el archivo y la responsabilidad caerá en el servicio que maneje los servicios, no el que maneja los usuarios.
+
+```javascript
+const SERVICE_TYPE_TO_CONTENT_PRICE_PROP = {
+  StreamingService: "streamingPrice",
+  DownloadService: "downloadPrice",
+};
+
+class RegisteredUser {
+  constuctor(
+    services = [],
+    serviceTypeToContentPriceProp = SERVICE_TYPE_TO_CONTENT_PRICE_PROP
+  ) {
+    this.services = services;
+    this.serviceTypeToContentPriceProp = serviceTypeToContentPriceProp;
+  }
+
+  getTotal() {
+    let total = 0;
+
+    this.services.forEach((service) => {
+      const multimediaContent = service.getMultimediaContent();
+      const serviceType = typeof service;
+      const contentPriceProp = this.serviceTypeToContentPriceProp[serviceType];
+
+      if (contentPriceProp && multimediaContent[contentPriceProp]) {
+        total += multimediaContent[contentPriceProp];
+
+        if (typeof multimediaContent === PremiumContent) {
+          total += multimediaContent.additionalFee;
+        }
+      } else {
+        throw new Error(
+          "[RegisteredUser] Unknown service type: " + serviceType
+        );
+      }
+    });
+
+    return total;
+  }
+}
+```
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
