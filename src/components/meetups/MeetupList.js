@@ -3,7 +3,7 @@ import classes from "./MeetupList.module.css";
 
 export default function MeetupList({
   meetups,
-  isLoading,
+  isLoading = false,
   emptyText = "There is no meetups available",
 }) {
   if (isLoading) return <p>Loading...</p>;
@@ -12,8 +12,8 @@ export default function MeetupList({
 
   return (
     <ul className={classes.list}>
-      {meetups.map((meetup) => (
-        <MeetupItem meetup={meetup} />
+      {meetups.map((meetup, index) => (
+        <MeetupItem key={meetup?.id || index} meetup={meetup} />
       ))}
     </ul>
   );

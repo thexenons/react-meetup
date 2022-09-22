@@ -76,6 +76,10 @@ Añadida propiedad `isLoading` para utilizar en el estado de la aplicación.
 
 Conectado formulario al estado de la aplicación para añadir nuevos **meetups** y poder añadirlos a favoritos.
 
+## Header
+
+Se ha añadido la animación solicitada de scroll mediante la creación de un hook de evento de scroll optimizado.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -19,19 +19,17 @@ export default function NewMeetupForm() {
   const updateInputValue = useCallback((e) => {
     const source = e.target.getAttribute("id");
     const value = e.target.value;
-    console.log({ source, value });
 
     setInputValues((inputValues) => ({ ...inputValues, [source]: value }));
   }, []);
 
-  function submitHandler(event) {
-    event.preventDefault();
+  function submitHandler(e) {
+    e?.preventDefault();
 
-    addMeetup({ ...inputValues, id: uuidv4() });
+    addMeetup?.({ ...inputValues, id: uuidv4() });
     setInputValues(initialFormState);
   }
 
-  console.log({ inputValues, title: inputValues.title });
   return (
     <Card>
       <form className={classes.form} onSubmit={submitHandler}>

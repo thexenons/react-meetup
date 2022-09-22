@@ -108,7 +108,6 @@ export const AppStateProvider = ({ children }) => {
       });
     }
   }, [appState.data, data]);
-  console.log({ appState });
 
   const addMeetup = useCallback((newMeetup) => {
     dispatch({

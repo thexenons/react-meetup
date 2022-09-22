@@ -6,9 +6,11 @@ import classes from "./MeetupItem.module.css";
 export default function MeetupItem({ meetup }) {
   const { favorites, addFavorite, deleteFavorite } = useAppState();
   const inFavorites = useMemo(
-    () => favorites.find((favorite) => favorite === meetup.id),
-    [favorites, meetup.id]
+    () => favorites.find((favorite) => favorite === meetup?.id),
+    [favorites, meetup?.id]
   );
+
+  if (!meetup) return null;
 
   return (
     <li className={classes.item} data-test="meet-up-item">
